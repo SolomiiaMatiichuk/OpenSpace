@@ -1,0 +1,60 @@
+﻿@using System.Security.Claims
+@using OpenSpaceBooking.BLL.Dtos
+@model IEnumerable<OpenSpaceBooking.BLL.Dtos.OpenSpaceDto>
+
+@{
+    ViewData["Title"] = "Open Spaces";
+    var isAuthenticated = User?.Identity?.IsAuthenticated;
+    var isAdmin = false;
+    var userEmail = String.Empty;
+    
+    if (isAuthenticated == true)
+    {
+        userEmail = User?.Claims?.SingleOrDefault(t => t.Type.Equals(ClaimTypes.Email))?.Value;
+        isAdmin = User.IsInRole("admin");
+    }
+}
+
+<div class="container mx-auto w-full mt-24 mb-5 relative text-center">
+    <img class="mx-auto mb-2" alt="Image" src="https://www.waveinside.com/site/assets/files/1151/table-reunion-conseil-design-ecrans-motorises-3-2.980x460.jpg" />
+    <div class="text-black text-5xl font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        Available Work Spaces
+    </div>
+</div>
+
+<div class="container mx-auto min-h-screen bg-blue-200">
+    @if (isAdmin)
+    {
+        <div class="block mb-5">
+            <a asp-controller="OpenSpace" asp-action="PostOpenSpace" class="w-80 bg-gray-500 text-white text-md rounded drop-shadow-lg px-4 py-2">Add Open Space</a>
+        </div>
+    }
+    <div class="grid grid-cols-4 gap-10">
+        @foreach (var element in Model)
+        {
+            <div class="drop-shadow-lg rounded grid grid-cols-1">
+                <img alt="Image" src="@element.ImageUrl"/>
+                <div class="bg-gray-500 p-3 grid grid-cols-1">
+                    @if (isAuthenticated == true && isAdmin)
+                    {
+                        <div class="text-white text-md font-regular">Id: @element.Id</div>
+                    }
+                    <a class="text-white text-3xl mb-3 font-semibold" asp-controller="OpenSpace" asp-action="OpenSpaceWithDetail" asp-route-id="@element.Id">@element.Title</a>
+                    <div class="text-white text-lg mb-3">Schedule: @element.StartProgram to @element.EndProgram</div>
+                    <div class="text-white text-md mb-3">Price per hour: @element.PricePerHour</div>
+                    @if (isAdmin)
+                    {
+                        <div class="inline-block">
+                            <a class="bg-red-600 text-white px-3 py-1 rounded drop-shadow-xl mr-2" asp-controller="OpenSpace" asp-action="DeleteOpenSpace" asp-route-id="@element.Id">
+                                Delete
+                            </a>
+                            <a class="bg-amber-600 text-white px-3 py-1 rounded drop-shadow-xl" asp-controller="OpenSpace" asp-action="UpdateOpenSpace" asp-route-id="@element.Id">
+                                Update
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
