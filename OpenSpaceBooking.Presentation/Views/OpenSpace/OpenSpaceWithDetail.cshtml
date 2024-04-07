@@ -1,4 +1,4 @@
-﻿@model OpenSpaceDto
+@model OpenSpaceDto
 @using OpenSpaceBooking.BLL.Dtos
 
 @{
@@ -24,7 +24,7 @@
                 hour12: false
             }
         });
-        axios.get("https://PhotoZoneBooking.azurewebsites.net/reservation/getopenspacereservations?photoZoneId=@Model.Id")
+        axios.get("https://openspaces.azurewebsites.net/reservation/getopenspacereservations?photoZoneId=@Model.Id")
              .then(response => {
                    response.data.forEach(t => calendar.addEvent({
                         title: t.title, 
